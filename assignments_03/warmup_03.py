@@ -214,7 +214,7 @@ plt.close()
 print("--- PCA Q2 ---")
 print("PCA 2D projection saved.")
 
-#Add comment here: do same-digit images cluster together? yes, same digit images tend to cluster togheter.  It could happen that two principal components don't capture all variation.
+#Do the same-digit images cluster together? yes, same digit images tend to cluster togheter.  It could happen that two principal components don't capture all variation.
 
 
 # PCA Question 3
@@ -234,7 +234,7 @@ print("--- PCA Q3 ---")
 print("First few cumulative variance values:")
 print(cumulative_variance[:10])
 
-#Add comment here: about how many components explain 80% of variance? To explain 80% of the variance is needed 10 principal components.   
+#About how many components explain 80% of variance? To explain 80% of the variance is needed 10 principal components.   
 
 
 # PCA Question 4
@@ -279,4 +279,4 @@ plt.close()
 print("-- PCA Q4 ---")
 print("PCA reconstructions saved.")
 
-#Add comment here: at what n do digits look clearly recognizable? It is more recognizable at n=15 components.That matches were the curve levels off around 10 components.
+# It is more recognizable at n=15 components.That matches were the curve levels off around 10 components.
