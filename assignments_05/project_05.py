@@ -1,7 +1,7 @@
 # Task 1: Setup and System Prompt
 
+import json
 from unittest import result
-
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -39,44 +39,70 @@ print(response)
 
 
 # Task 2: Bullet Point Rewriter
-import json
 
 def rewrite_bullets(bullets: list[str]) -> list[dict]:
     bullet_text = "\n".join(f"- {b}" for b in bullets)
 
     prompt = f"""
-    You are a professional resume coach helping a career changer.
-    Rewrite each resume bullet point below to be more specific, results-oriented, and compelling.
-    Use strong action verbs. Do not invent facts that aren't implied by the original.
+You are a professional resume coach helping a career changer.
 
-    Respond ONLY with valid JSON.
-    Do not include explanations, markdown, or extra text.
+Rewrite each resume bullet point below to be more specific, results-oriented, and compelling.
+Use strong action verbs.
+Do not invent facts that are not implied by the original.
 
-    Return ONLY a valid JSON list. Each item should have two keys:
-    "original" (the original bullet) and "improved" (your rewritten version).
+Respond ONLY with valid JSON.
+Do not include explanations, markdown, or extra text.
 
-    Bullet points:
-    ```
-    {bullet_text}
-    ```
-    """
+Return a JSON list.
+Each item must have exactly these keys:
+"original" and "improved".
+
+Bullet points:
+
+{bullet_text}
+  
+
+"""
 
     messages = [{"role": "user", "content": prompt}]
+    response = get_completion(messages, temperature=0)
+
+    try:
+        results = json.loads(response)
+        return results
+
+    except json.JSONDecodeError:
+        print("\nJob Application Helper: Failed to parse JSON.")
+        print("Raw response:")
+        print(response)
+        return []
 
 
-    messages = [{"role": "user", "content": prompt}]
-    response = get_completion(messages, temperature=0)                  
-    
+def display_rewritten_bullets(results: list[dict]) -> None:
+    if not results:
+        print("\nJob Application Helper: No rewritten bullets were generated.")
+        return
 
-    return json.loads(response) 
+    print("\nJob Application Helper: Here are your rewritten bullets:\n")
 
-bullets = [
-    "Helped customers with their problems",
-    "Made reports for the management team",
-    "Worked with a team to finish the project on time"
-]
+    for i, item in enumerate(results, start=1):
+        print(f"Bullet {i}")
+        print(f"Original: {item['original']}")
+        print(f"Improved: {item['improved']}")
+        print("-" * 40)
 
-rewrite_bullets(bullets)
+    print("Please review and edit these before submitting them anywhere.")
+
+
+if __name__ == "__main__":
+    bullets = [
+        "Helped customers with their problems",
+        "Made reports for the management team",
+        "Worked with a team to finish the project on time"
+    ]
+
+    results = rewrite_bullets(bullets)
+    display_rewritten_bullets(results)
 
 
 #The model did a good job rewriting the bullet points to be more specific and results-oriented. It used strong action verbs and provided clear improvements to each bullet point. 
@@ -94,7 +120,7 @@ def generate_cover_letter(job_title: str, background: str) -> str:
     Example 1:
     Role: Data Engineering
     Background: Python courses from Code the Dream, including data engineering fundamentals. Experience as a data analyst for over five years.
-    Opening: After five years as a data analyst, following the data engineering process from the beginning to the end has become a great interest for me and the company.  Presenting insights to stakeholders is rewarding, and realizing how important is to have the right software and right data pipelines to get the right data to the right people at the right time has made me want to be on the other side of the process.  I'm aexcited to apply ot you company and put in practice the data engineering skills I have been learning and my experience as a data analyst to help your company to have the right data pipelines to get the right data to the right people at the right time.
+    Opening: After five years as a data analyst, following the data engineering process from the beginning to the end has become a great interest for me and the company.  Presenting insights to stakeholders is rewarding, and realizing how important is to have the right software and right data pipelines to get the right data to the right people at the right time has made me want to be on the other side of the process.  I am excited to apply to your company and put in practice the data engineering skills I have been learning and my experience as a data analyst to help your company to have the right data pipelines to get the right data to the right people at the right time.
 
     Example 2:
     Role: Junior Software Engineer at a fintech startup
@@ -197,7 +223,8 @@ def run_chatbot():
                 if line:
                     raw_bullets.append(line)
             if raw_bullets:
-                rewrite_bullets(raw_bullets)
+                rewritten = rewrite_bullets(raw_bullets)
+                display_rewritten_bullets(rewritten)
             else:
                 print("Job Application Helper: No bullet points entered. Returning to main menu.")
 
