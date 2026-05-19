@@ -48,14 +48,17 @@ steps = [
     "Split text into chunks",
     "Embed the user's query",
 ]
-# 1. Receive the user's query: The user asks a question or provides a request.
-# 2. Embed the user's query: The query is converted into a numerical representation that can be used to find similar queries.
-# 3. Retrieve the most relevant chunks: the system searches for the most relevant text chunks based on the embedded query.
-# 4. Extract text from source documents: The text is extracted from the source documents.
-# 5. Split text into chunks: The text is split into smaller, manageable pieces.
-# 6. Convert text chunks into embeddings: The text chunks are converted into numerical representations.
+
+# 1. Extract text from source documents: The text is extracted from the source documents.
+# 2. Split text into chunks: The text is split into smaller, manageable pieces.
+# 3. Convert text chunks into embeddings: The text chunks are converted into numerical representations.
+# 4. Receive the user's query: The user asks a question or provides a request.
+# 5. Embed the user's query: The query is converted into a numerical representation that can be used to find similar queries.
+# 6. Retrieve the most relevant chunks: the system searches for the most relevant text chunks based on the embedded query.
 # 7. Inject retrieved chunks into the prompt: The relevant text chunks are added to the prompt to provide context for the LLM.
-# 8. Generate a response from the LLM: The LLM generates a response based on the prompt that includes the retrieved text chunks.
+# 8. Generate a response from the LLM: The LLM generates a response based
+
+# In Concepts Q3, the RAG pipeline order is mixed up a bit. The documents should first be extracted, chunked, and embedded before the user query gets embedded and retrieval happens.
 
 
 #KEYWORD RAG
@@ -124,7 +127,8 @@ results = simple_keyword_retrieval(query, documents, verbose=True)
 print("\nSelected document:")
 print(results[0][0])
 
-# The selected document was loyalty.txt, is not the best answer because it only has one keyword that matches with the query, which is "your". The best answer should be hours.txt because it contains more relevant keywords like "hours" and "weekend". This shows the limitation of keyword based retrieval, as it can miss relevant documants if they don't have enough overlapping keywords, even if they are more relevant to the user's query. 
+# The best answer should be hours.txt because it contains more relevant keywords like "hours" and "weekend". The question is asking about weekend hours. This shows the limitation of keyword based retrieval, as it can miss relevant documants if they don't have enough overlapping keywords, even if they are more relevant to the user's query. 
+
 
 
 #KEYWORD Q2
@@ -149,9 +153,14 @@ print(results[0][0])
 
 # Before running any code, predict which document will be selected for the query below. Write your prediction and your reasoning as a comment first, then run the code to check.
 
+# Prediction:
+# I think the file to be selected will be loyalty.txt because the question contains the word "rewards" and the loyalty.txt document mentions a loyalty program.
+
 query = "How do I sign up for rewards?"
 
 # Was your prediction correct? If the result surprised you, add a comment explaining what happened.
+# The result was different than expected because the keyword "rewards" is not in the loyalty.txt document, so the system did not find any overlapping keywords and returned "none found". It shows that the keyword method can struggle relating words even though are semantically related. The system relies on exact word matches, so if the query uses synonyms or related terms that are not present in the documents, it may fail to retrieve relevant information.
+
 
 results = simple_keyword_retrieval(query, documents, verbose=True)
 
@@ -178,7 +187,7 @@ print(results[0][0])
 # | Feature                 | Keyword RAG                    | Semantic RAG                     |
 # |-------------------------|--------------------------------|--------------------------------- |
 # | What is compared?       | Exact word overlap             | Vector embeddings                |
-# | What is retrieved?      | Full document                  | Relrvant Chunks                           |
+# | What is retrieved?      | Full document                  | Document Chunks                           |
 # | Can it handle synonyms? | No                             | Yes                              |
 # | Storage format          | Plain text dictionary          | Vector database, index          |
 # | Relevance score         | Overlapping keywords           | Cosine similarity                |

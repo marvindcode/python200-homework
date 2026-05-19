@@ -113,6 +113,24 @@ for i, node in enumerate(failure_response.source_nodes, start=1):
 
 # Step 6 Reflection 
 
-# A semantic RAG model requieres more steps than the keyword-based RAG model because it needs to process the documents into vector embeddings, build an index, and perform similarity search. However, the semantic RAG model can retrieve more relevant information even when the wording of the query is different from the documents, which is a big advantage over keyword-based retrieval.
+# 1.The lesson built semantic RAG manually — chunking, embedding, and indexing took many lines of code. How many lines did the equivalent LlamaIndex implementation take in your project? What does that tell you about the value of using a framework?
 
-#The LlamaIndex makes it easier to build a semantic RAG system, taking away the complexity of handling vector embeddings and similarity search. It provides a simple interface to create an index from documents and query it, which abstracts away the underlying details of how the retrieval works. This allows developers to focus more on the application logic rather than the technical implementation of RAG.
+# A semantic RAG model requieres more steps than the keyword-based RAG model because it needs to process the documents into vector embeddings, build an index, and perform similarity search. However, the semantic RAG model can retrieve more relevant information even when the wording of the query is different from the documents, which is a big advantage over keyword-based retrieval.  The LlamaIndex implementation took few lines of code to build the index and to make the queries.  The LlamaIndex allow to focus on the applciation logical instead of the technical implementation of RAG.
+
+
+
+
+# 2.You have now built a system that answers questions from real documents. Describe a different use case — not a coffee shop — where this approach would add genuine value to a business or organization.
+
+# Another use case it could be an ordering sytem for ordering candle making supplies. The system could answer questions about the different types of wax, wicks, and fragrances available, as well as provide information about shipping times and return policies. There aew many questions when ordering supplies, that will be easeier for customers if the systems can answer them quickly and accurately. This would add value to the business by improving customer satisfaction and reducing the workload on customer service representatives.  It will be necessary to upload technical documents that can answer basic questions about the products.  This could be applied to many industries, where customers have questions avbout products an or services.
+
+# 3.What is one failure mode that RAG cannot fully prevent, even when retrieval is working correctly?
+
+# Even if the retrieval works, the RAG system cannot fully prevent the information retrieved is not correct or relevant to the question.  So the retrieval could work loading the right document, but the answer could be vague or incorrect because the model doesn't have the logic to answer correctly.  It oculd sound confident but the answer could be wrong. 
+
+
+
+
+
+
+
