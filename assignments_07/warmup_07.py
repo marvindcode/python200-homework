@@ -187,21 +187,20 @@ def run_agent(user_prompt: str) -> str:
 
     client = OpenAI()
 
-    SYSTEM_PROMPT = """You are a simple assistant that can tell the current time.
-                     Use the tool get_current_time whenever a user asks about the time."""
-    SYSTEM_PROMPT = """You are a simple assistant that can tell the current time
-                     and convert Celsius temperatures to Fahrenheit.
-                     Use the tool get_current_time whenever a user asks about the time.
-                     Use the tool celsius_to_fahrenheit whenever a user asks for a Celsius to Fahrenheit conversion."""
+    SYSTEM_PROMPT = """You are a simple assistant that can tell the current time and convert Celsius temperatures to Fahrenheit.
+                    
+                    Use the tool get_current_time whenever a user asks about the time.
+                    Use the tool celsius_to_fahrenheit whenever a user asks for a Celsius to Fahrenheit conversion."""
     
-    tools = [get_current_time_schema]
-    tools = [celsius_to_fahrenheit_schema]
+    tools = [
+        get_current_time_schema,
+        celsius_to_fahrenheit_schema
+    ]
 
     messages = [
         {'role': 'system', 'content': SYSTEM_PROMPT},
         {'role': 'user', 'content': user_prompt},
     ]
-
    
     first_response = client.chat.completions.create(
         model='gpt-4.1-mini',

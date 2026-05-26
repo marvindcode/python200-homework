@@ -225,7 +225,7 @@ def run_guided_queries():
         "Load the happiness data and tell me its shape and column names.",
         "Summarize the Happiness score column.",
         "What is the correlation between GDP per capita and Happiness score?",
-        "Show me the top 5 countries ranked by Happiness score in 2020."
+        "Show me the top 5 countries ranked by Happiness score in 2020.",
         f"Plot Happiness score over the years as a line chart, with one line per Regional indicator. Save the plot to {OUTPUT_DIR / 'happiness_by_region.png'}.",
     ]
 
@@ -243,7 +243,7 @@ def run_guided_queries():
 
 
 def run_my_queries():
-    my_query_1 = "Which region had the highest average happiness_score across all years? Please calculate it."
+    my_query_1 = "Which Regional indicator had the highest average Happiness score across all years? Please calculate it."
     response_1 = agent.run(
         my_query_1,
         reset=False,
@@ -254,13 +254,18 @@ def run_my_queries():
     )
     print("\n--- My Query 1 ---")
     print(response_1)
-    
 
-    my_query_2 = "Show me the top 10 countries by gdp_per_capita in 2020."
-    response_2 = agent.run(my_query_2, reset=False)
+    my_query_2 = "Show me the top 10 countries by GDP per capita in 2020."
+    response_2 = agent.run(
+        my_query_2,
+        reset=False,
+        additional_args={
+            "DATA_PATH": DATA_PATH,
+            "OUTPUT_DIR": OUTPUT_DIR,
+        }
+    )
     print("\n--- My Query 2 ---")
     print(response_2)
-    
 
 if __name__ == "__main__":
     print("Starting project_07.py...")
