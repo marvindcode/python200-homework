@@ -32,8 +32,6 @@
 #---Blob Storage--- #Q3
 # Write a function list_container(container_client) that prints the name and size (in bytes) of every blob in the container, one per line. The function should take a ContainerClient object as its only argument and return nothing.
 def list_container(container_client):
-    blob_client = container_client.get_blob_client()
-    
     for blob in container_client.list_blobs():
         print(f"Name: {blob.name}, Size: {blob.size} bytes")    
 
