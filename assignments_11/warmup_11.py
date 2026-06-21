@@ -4,8 +4,7 @@
 
 # Prefect Question 2
 # Write the decorator (just the decorator line, not the full function) for a task named call_api that retries up to 3 times with a 30-second delay between attempts.
-# @call_api (times=3, retrieve=30)
-# def call_api():
+#@task(retries=3, retry_delay_seconds=30)
 
 # Prefect Question 3
 # You run your pipeline and the Prefect UI shows: extract is Completed, transform is Failed, load never ran. In a comment block, describe: where in the UI do you look to understand what went wrong, and what specific information would you expect to find there?
@@ -30,4 +29,3 @@ def load(records: list, blob_path: str):
     logger = get_run_logger()
     logger.info(f"Loaded {len(records)} records to {blob_path}")
 
-    

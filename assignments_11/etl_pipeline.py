@@ -1,5 +1,5 @@
 # Video link: PASTE_YOUR_VIDEO_LINK_HERE
-https://youtu.be/G1MXwwXNvag
+# https://youtu.be/xBlOLtTYBsg
 
 import json
 import os
@@ -12,13 +12,8 @@ from prefect import flow, task
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 
-
-import os
-from dotenv import load_dotenv
-
 load_dotenv()
 
-ACCOUNT_URL = "https://<your-account>.blob.core.windows.net"
 CONTAINER = "pipeline-data"
 DAY_RECORDS = 24  
 
@@ -49,22 +44,20 @@ def extract(latitude: float, longitude: float) -> dict:
 
 
 @task
-def transform(data: dict, max_records: int) -> list:
+def transform(data: dict, day_records: int) -> list:
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
     hourly = data["hourly"]
 
     records = []
-    for i in range(min(max_records, len(hourly["time"]))):
+    for i in range(len(hourly["time"])):
         records.append({
             "time": hourly["time"][i],
             "temperature_2m": hourly["temperature_2m"][i],
             "precipitation": hourly["precipitation"][i],
         })
 
-    enriched = []
-
-    for i, record in enumerate(records):
+    for i, record in enumerate(records[:day_records]):
         user_msg = (
             f"Temperature: {record['temperature_2m']}C, "
             f"Precipitation: {record['precipitation']}mm"
@@ -81,16 +74,16 @@ def transform(data: dict, max_records: int) -> list:
         raw_label = response.choices[0].message.content.strip().lower()
         label = raw_label if raw_label in VALID_LABELS else "unknown"
 
-        enriched.append({**record, "conditions": label})
+        records[i]["classification"] = label
 
         if (i + 1) % 6 == 0:
             print(f"  Classified {i + 1}/{len(records)} records")
 
-    print(f"Transform complete: {len(enriched)} records enriched")
-    return enriched
+    print(f"Transform complete: {len(records)} records enriched")
+    return records
 
 @task
-def load(enriched_records, blob_path):
+def load(enriched_records, blob_path: str) -> str:
     json_data = json.dumps(enriched_records, indent=2)
     byte_count = len(json_data.encode("utf-8"))
 
@@ -109,8 +102,6 @@ def load(enriched_records, blob_path):
     print(f"Uploaded to {blob_path} ({byte_count} bytes)")
     return blob_path
 
-    print(f"Loaded {len(byte_count)} bytes to {blob_path}")
-
 
 @flow(log_prints=True)
 def etl_pipeline(
@@ -125,12 +116,12 @@ def etl_pipeline(
 
     enriched = transform(
         data,
-        max_records=DAY_RECORDS
+        day_records=DAY_RECORDS
     )
 
-    load(enriched, blob_path)
+    final_blob_path = load(enriched, blob_path)
 
-    print(f"Full ETL Pipeline complete. Results at {blob_path}")
+    print(f"Full ETL Pipeline complete. Results at {final_blob_path}")
 
 if __name__ == "__main__":
     etl_pipeline()
