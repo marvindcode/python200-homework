@@ -1,6 +1,6 @@
 # Prefect Question 1
 # In a comment block, answer: what is the difference between a @task and a @flow in Prefect? You have a helper function that converts a temperature from Celsius to Fahrenheit -- a pure, in-memory calculation with no I/O. Would you decorate it with @task? Why or why not?
-# The difference is that @task is for a single unit of task, like loading data, calling an API or writing a file.  A flow combines different tasks in order and manages them as a whole.   I will decorate it with @task because is a single unit of work, it just converts Celsius to Fahrenheit.
+# The difference is that @task is for a single unit of task, like loading data, calling an API or writing a file.  A flow combines different tasks in order and manages them as a whole.   I would not decorate the conversion from Celsius to Fahrenheit with @task because it is a pure, in-memory calculation with no I/O.  It does not need to be retried or logged, and it does not have any side effects that would require Prefect's orchestration features.  A Python function would be enough foir this simple calculation.
 
 # Prefect Question 2
 # Write the decorator (just the decorator line, not the full function) for a task named call_api that retries up to 3 times with a 30-second delay between attempts.
@@ -8,7 +8,7 @@
 
 # Prefect Question 3
 # You run your pipeline and the Prefect UI shows: extract is Completed, transform is Failed, load never ran. In a comment block, describe: where in the UI do you look to understand what went wrong, and what specific information would you expect to find there?
-# I will look at the UI, where I can see the flow run and the three tasks: extract, transform, and load. All of them are in the Completed state. The logs also show the progress messages from the transform task and the upload confirmation from the load task. This is useful because if something failed, Prefect would show which task failed and the error trace.
+# In the UI I will have to click on the transform task to see the logs and error messages. I would find the stack trace or error message that indicates what went wrong during the transform step, such as an exception raised by the OpenAI API or a data processing error. This information will help me identify the root cause of the failure and fix it before re-running the pipeline.
 
 
 # Production Patterns
